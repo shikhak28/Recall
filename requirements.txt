@@ -1,0 +1,11 @@
+rapidocr>=3.10
+onnxruntime>=1.20
+fastembed>=0.9
+pymupdf>=1.26
+numpy
+pillow
+streamlit>=1.40
+openai>=1.50
+python-dotenv
+matplotlib
+pytest

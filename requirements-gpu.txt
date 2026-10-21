@@ -1,0 +1,12 @@
+# NVIDIA GPU build: CUDA 12 + cuDNN 9 come as pip wheels, no system CUDA toolkit needed (driver >= 525).
+rapidocr>=3.10
+onnxruntime-gpu[cuda,cudnn]>=1.21
+fastembed-gpu>=0.9
+pymupdf>=1.26
+numpy
+pillow
+streamlit>=1.40
+openai>=1.50
+python-dotenv
+matplotlib
+pytest

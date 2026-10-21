@@ -1,0 +1,1065 @@
+{
+ "corpus": {
+  "files": 300,
+  "queries": 118,
+  "generated_on": "2026-10-21"
+ },
+ "indexing": {
+  "seconds": 0.1,
+  "files_per_sec": null,
+  "note": "only newly indexed files are timed; use --reindex for a full timing"
+ },
+ "dedup": {
+  "expected": 30,
+  "detected": 30
+ },
+ "ocr": {
+  "files_with_text": 232,
+  "extraction_success_rate": 1.0,
+  "mean_token_recall": 0.9977994555353902,
+  "mean_char_error_approx": 0.0556549352039618,
+  "text_free_photos_correctly_empty": "38/38",
+  "token_recall_by_source": {
+   "pdf": 1.0,
+   "pdf-scanned": 1.0,
+   "phone": 1.0,
+   "receipt": 1.0,
+   "slide": 1.0,
+   "web": 0.992
+  }
+ },
+ "retrieval": [
+  {
+   "method": "Filename (baseline)",
+   "queries": 118,
+   "recall@5": 0.00847457627118644,
+   "mrr@10": 0.0016949152542372883,
+   "hit@1": 0.0,
+   "recall@5_by_type": {
+    "content": 0.009,
+    "date": 0.0
+   },
+   "latency_ms_mean": 1.683476839265865,
+   "latency_ms_p95": 2.473599975928664,
+   "failures": [
+    {
+     "query": "when is my Machine Learning final exam",
+     "expected": [
+      "Screenshot_20260905_095832.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "when is my Operating Systems final exam",
+     "expected": [
+      "Screenshot_20260911_093637.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "Computer Networks midterm date and place",
+     "expected": [
+      "Screenshot_20260706_142306.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "screenshot with the Linear Algebra exam schedule",
+     "expected": [
+      "Screenshot_20260731_155011.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "when is my Database Systems midterm exam",
+     "expected": [
+      "Screenshot_20260827_211048.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "Computer Vision final date and place",
+     "expected": [
+      "Screenshot_20260905_220453.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "screenshot with the Natural Language Processing exam schedule",
+     "expected": [
+      "Screenshot_20260625_222210.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "screenshot with the Signals and Systems exam schedule",
+     "expected": [
+      "IMG_8053.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "which room is the Probability and Statistics test in",
+     "expected": [
+      "Screenshot_20260722_150031.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "when is my Data Structures midterm exam",
+     "expected": [
+      "Screenshot_20261016_202525.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "Software Engineering final date and place",
+     "expected": [
+      "IMG_1417.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "screenshot with the Deep Learning exam schedule",
+     "expected": [
+      "Screenshot_20260707_232930.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "which room is the Korean Language II test in",
+     "expected": [
+      "IMG_5883.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "which room is the Microeconomics test in",
+     "expected": [
+      "IMG_4197.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "when is my Digital Logic final exam",
+     "expected": [
+      "Screenshot_20260822_161244.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "deadline for Machine Learning homework 3",
+     "expected": [
+      "document(1).pdf"
+     ],
+     "got": [
+      "IMG_3297.jpg",
+      "IMG_3395.jpg",
+      "IMG_3532.jpg"
+     ]
+    },
+    {
+     "query": "deadline for Operating Systems homework 4",
+     "expected": [
+      "IMG_8109.jpg"
+     ],
+     "got": [
+      "IMG_4139.jpg",
+      "IMG_4197.jpg",
+      "IMG_4230.jpg"
+     ]
+    },
+    {
+     "query": "when do I have to submit assignment 3 for Computer Networks",
+     "expected": [
+      "scan0002.pdf"
+     ],
+     "got": [
+      "IMG_3297.jpg",
+      "IMG_3395.jpg",
+      "IMG_3532.jpg"
+     ]
+    },
+    {
+     "query": "Linear Algebra hw4 due date",
+     "expected": [
+      "IMG_2683.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "deadline for Database Systems homework 2",
+     "expected": [
+      "notice(3).pdf"
+     ],
+     "got": [
+      "IMG_2251.jpg",
+      "IMG_2372.jpg",
+      "IMG_2496.jpg"
+     ]
+    },
+    {
+     "query": "deadline for Computer Vision homework 5",
+     "expected": [
+      "IMG_9219.jpg"
+     ],
+     "got": [
+      "IMG_5003.jpg",
+      "IMG_5055.jpg",
+      "IMG_5084.jpg"
+     ]
+    },
+    {
+     "query": "Natural Language Processing hw5 due date",
+     "expected": [
+      "Screenshot_20261012_224911.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "deadline for Signals and Systems homework 4",
+     "expected": [
+      "download(4).pdf"
+     ],
+     "got": [
+      "IMG_4139.jpg",
+      "IMG_4197.jpg",
+      "IMG_4230.jpg"
+     ]
+    },
+    {
+     "query": "deadline for Probability and Statistics homework 2",
+     "expected": [
+      "Screenshot_20260902_084857.png"
+     ],
+     "got": [
+      "IMG_2251.jpg",
+      "IMG_2372.jpg",
+      "IMG_2496.jpg"
+     ]
+    },
+    {
+     "query": "when do I have to submit assignment 2 for Software Engineering",
+     "expected": [
+      "Screenshot_20260812_222004.png"
+     ],
+     "got": [
+      "IMG_2251.jpg",
+      "IMG_2372.jpg",
+      "IMG_2496.jpg"
+     ]
+    },
+    {
+     "query": "Deep Learning hw3 due date",
+     "expected": [
+      "IMG_7525.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "Korean Language II hw2 due date",
+     "expected": [
+      "scan0005.pdf"
+     ],
+     "got": []
+    },
+    {
+     "query": "when do I have to submit assignment 1 for Microeconomics",
+     "expected": [
+      "IMG_2848.jpg"
+     ],
+     "got": [
+      "IMG_1286.jpg",
+      "IMG_1413.jpg",
+      "IMG_1417.jpg"
+     ]
+    },
+    {
+     "query": "when do I have to submit assignment 1 for Digital Logic",
+     "expected": [
+      "notice(6).pdf"
+     ],
+     "got": [
+      "IMG_1286.jpg",
+      "IMG_1413.jpg",
+      "IMG_1417.jpg"
+     ]
+    },
+    {
+     "query": "wifi details for Grandma's house",
+     "expected": [
+      "Screenshot_20260709_165607.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "internet password at the library study room",
+     "expected": [
+      "IMG_7818.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "wifi details for Cafe Mori",
+     "expected": [
+      "Screenshot_20260623_184821.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "wifi details for the lab (Room 512)",
+     "expected": [
+      "IMG_2251.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "wifi details for the Airbnb in Busan",
+     "expected": [
+      "IMG_5084.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "internet password at the dorm lounge",
+     "expected": [
+      "IMG_7554.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "my plane ticket to Tokyo",
+     "expected": [
+      "notice(7).pdf"
+     ],
+     "got": []
+    },
+    {
+     "query": "my plane ticket to New Delhi",
+     "expected": [
+      "Screenshot_20260819_184828.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "my plane ticket to Jeju",
+     "expected": [
+      "scan0008.pdf"
+     ],
+     "got": []
+    },
+    {
+     "query": "my plane ticket to Singapore",
+     "expected": [
+      "scan0009.pdf"
+     ],
+     "got": []
+    },
+    {
+     "query": "what gate does my Osaka flight leave from",
+     "expected": [
+      "document(10).pdf"
+     ],
+     "got": []
+    },
+    {
+     "query": "my plane ticket to Bangkok",
+     "expected": [
+      "IMG_8787.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "when am I seeing the skin doctor",
+     "expected": [
+      "IMG_7881.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "when am I seeing the dentist",
+     "expected": [
+      "Screenshot_20260722_230244.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "when am I seeing the eye doctor",
+     "expected": [
+      "Screenshot_20261003_174754.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "when am I seeing the bone and joint specialist",
+     "expected": [
+      "Screenshot_20260821_151648.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "when am I seeing the ear nose and throat doctor",
+     "expected": [
+      "Screenshot_20260824_215842.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "where did Minji say we should meet",
+     "expected": [
+      "Screenshot_20260626_122603.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "where did Arjun say we should meet",
+     "expected": [
+      "Screenshot_20260924_110559.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "where did Sofia say we should meet",
+     "expected": [
+      "Screenshot_20260916_205323.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "where did Daniel say we should meet",
+     "expected": [
+      "Screenshot_20260728_102226.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "where did Yuna say we should meet",
+     "expected": [
+      "Screenshot_20260929_175251.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "where did Priya say we should meet",
+     "expected": [
+      "IMG_1496.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "proof that I paid october rent",
+     "expected": [
+      "IMG_5210.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "money I sent for the barbecue dinner",
+     "expected": [
+      "IMG_6185.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "payment for the AI club dues",
+     "expected": [
+      "Screenshot_20260626_150630.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "september phone bill transfer",
+     "expected": [
+      "Screenshot_20261017_215231.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "transfer for the second hand textbook",
+     "expected": [
+      "Screenshot_20261006_123815.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "how much I paid for the gym membership",
+     "expected": [
+      "Screenshot_20260827_142548.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "slide about how a neural network computes gradients for its weights",
+     "expected": [
+      "IMG_2723.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "lecture on stopping a model from memorizing the training set",
+     "expected": [
+      "IMG_3837.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "how a client and server open a connection",
+     "expected": [
+      "IMG_2985.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "the four requirements for processes getting stuck waiting on each other",
+     "expected": [
+      "Screenshot_20260730_163617.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "vectors that only get stretched, not rotated, by a matrix",
+     "expected": [
+      "scan0011.pdf"
+     ],
+     "got": [
+      "notice(22).pdf",
+      "notice(27).pdf",
+      "notice(3).pdf"
+     ]
+    },
+    {
+     "query": "slide about removing duplicated data across tables",
+     "expected": [
+      "scan0012.pdf"
+     ],
+     "got": []
+    },
+    {
+     "query": "slide on image filters and pooling layers",
+     "expected": [
+      "Screenshot_20260914_114129.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "the formula transformers use to weight tokens against each other",
+     "expected": [
+      "IMG_4815.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "rule for updating a probability after seeing new evidence",
+     "expected": [
+      "Screenshot_20260629_143852.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "what happens if the training step size is too big",
+     "expected": [
+      "document(13).pdf"
+     ],
+     "got": []
+    },
+    {
+     "query": "difference between a program instance and lightweight execution units sharing memory",
+     "expected": [
+      "Screenshot_20260706_191302.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "how to describe how running time grows with input size",
+     "expected": [
+      "IMG_6361.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "that spicy recipe with rice cakes and red pepper paste",
+     "expected": [
+      "Screenshot_20260716_170413.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "recipe for frying leftover rice with fermented cabbage",
+     "expected": [
+      "Screenshot_20260701_210650.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "how to make the lentil curry with tempered spices",
+     "expected": [
+      "Screenshot_20260914_132544.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "breakfast recipe with flour milk and maple syrup",
+     "expected": [
+      "Screenshot_20260916_172603.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "italian pasta made with egg yolks and cured pork",
+     "expected": [
+      "IMG_4230.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "IU concert seat number",
+     "expected": [
+      "IMG_8551.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "ticket for the Coldplay show",
+     "expected": [
+      "Screenshot_20260704_194732.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "ticket for the NewJeans show",
+     "expected": [
+      "Screenshot_20260824_141908.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "ticket for the AP Dhillon show",
+     "expected": [
+      "Screenshot_20260704_134050.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "Day6 concert seat number",
+     "expected": [
+      "Screenshot_20260628_203310.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "when is Deep Learning due back at the library",
+     "expected": [
+      "Screenshot_20260628_094253.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "when is Clean Code due back at the library",
+     "expected": [
+      "Screenshot_20260901_174126.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "when is Sapiens due back at the library",
+     "expected": [
+      "IMG_8623.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "when is Operating System Concepts due back at the library",
+     "expected": [
+      "Screenshot_20261008_135130.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "when is The Pragmatic Programmer due back at the library",
+     "expected": [
+      "Screenshot_20260808_105128.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "where did I park at COEX Mall",
+     "expected": [
+      "Screenshot_20260923_100348.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "where did I park at Starfield Hanam",
+     "expected": [
+      "Screenshot_20260919_111208.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "where did I park at Lotte World Mall",
+     "expected": [
+      "Screenshot_20260927_161020.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "where did I park at Hyundai Department Store Daegu",
+     "expected": [
+      "Screenshot_20260719_163932.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "Naver interview time",
+     "expected": [
+      "Screenshot_20261015_201050.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "Samsung Research interview time",
+     "expected": [
+      "IMG_3395.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "when is my interview with Kakao",
+     "expected": [
+      "IMG_1553.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "when is my interview with NVIDIA",
+     "expected": [
+      "Screenshot_20260709_231439.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "when is my interview with LG AI Research",
+     "expected": [
+      "file(14).pdf"
+     ],
+     "got": []
+    },
+    {
+     "query": "documents needed to extend my visa / residence card",
+     "expected": [
+      "scan0015.pdf"
+     ],
+     "got": [
+      "document(1).pdf",
+      "document(10).pdf",
+      "document(13).pdf"
+     ]
+    },
+    {
+     "query": "what time does the dorm close at night",
+     "expected": [
+      "scan0016.pdf"
+     ],
+     "got": []
+    },
+    {
+     "query": "when is the scholarship application due",
+     "expected": [
+      "scan0017.pdf"
+     ],
+     "got": []
+    },
+    {
+     "query": "how many credits do I need to graduate",
+     "expected": [
+      "scan0018.pdf"
+     ],
+     "got": []
+    },
+    {
+     "query": "monthly cost of the national health insurance for foreign students",
+     "expected": [
+      "scan0019.pdf"
+     ],
+     "got": []
+    },
+    {
+     "query": "deadline for the mandatory safety course",
+     "expected": [
+      "scan0020.pdf"
+     ],
+     "got": []
+    },
+    {
+     "query": "receipt from Lotte Mart",
+     "expected": [
+      "IMG_2372.jpg",
+      "Screenshot_20260928_120400.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "the Lotte Mart receipt from October",
+     "expected": [
+      "IMG_2372.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "receipt from Olive Young",
+     "expected": [
+      "Screenshot_20260706_130300.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "how much did I spend at Daiso",
+     "expected": [
+      "Screenshot_20260812_210100.png",
+      "Screenshot_20261015_104200.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "the Daiso receipt from August",
+     "expected": [
+      "Screenshot_20260812_210100.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "receipt from GS25",
+     "expected": [
+      "Screenshot_20260813_140300.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "receipt from Starbucks",
+     "expected": [
+      "Screenshot_20261010_181500.png",
+      "Screenshot_20260911_172000.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "the Starbucks receipt from October",
+     "expected": [
+      "Screenshot_20261010_181500.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "receipt from Kyobo Bookstore",
+     "expected": [
+      "Screenshot_20260921_121500.png",
+      "IMG_9096.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "the Kyobo Bookstore receipt from September",
+     "expected": [
+      "Screenshot_20260921_121500.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "receipt from Uniqlo",
+     "expected": [
+      "IMG_4767.jpg",
+      "Screenshot_20260701_090800.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "the Uniqlo receipt from August",
+     "expected": [
+      "IMG_4767.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "receipt from Paris Baguette",
+     "expected": [
+      "Screenshot_20261009_092900.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "receipt from Emart",
+     "expected": [
+      "IMG_4248.jpg",
+      "IMG_2630.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "the Emart receipt from September",
+     "expected": [
+      "IMG_4248.jpg"
+     ],
+     "got": []
+    },
+    {
+     "query": "receipt from ABC Mart",
+     "expected": [
+      "IMG_1286.jpg",
+      "Screenshot_20260815_105200.png"
+     ],
+     "got": []
+    },
+    {
+     "query": "the ABC Mart receipt from October",
+     "expected": [
+      "IMG_1286.jpg"
+     ],
+     "got": []
+    }
+   ]
+  },
+  {
+   "method": "Keyword BM25",
+   "queries": 118,
+   "recall@5": 0.9152542372881356,
+   "mrr@10": 0.8759887005649718,
+   "hit@1": 0.8389830508474576,
+   "recall@5_by_type": {
+    "content": 0.91,
+    "date": 1.0
+   },
+   "latency_ms_mean": 1.1586989542485167,
+   "latency_ms_p95": 1.5833000070415437,
+   "failures": [
+    {
+     "query": "when am I seeing the skin doctor",
+     "expected": [
+      "IMG_7881.jpg"
+     ],
+     "got": [
+      "IMG_1496.jpg",
+      "Screenshot_20260626_122603.png",
+      "Screenshot_20260728_102226.png"
+     ]
+    },
+    {
+     "query": "when am I seeing the dentist",
+     "expected": [
+      "Screenshot_20260722_230244.png"
+     ],
+     "got": [
+      "IMG_1496.jpg",
+      "Screenshot_20260626_122603.png",
+      "Screenshot_20260728_102226.png"
+     ]
+    },
+    {
+     "query": "when am I seeing the eye doctor",
+     "expected": [
+      "Screenshot_20261003_174754.png"
+     ],
+     "got": [
+      "IMG_1496.jpg",
+      "Screenshot_20260626_122603.png",
+      "Screenshot_20260728_102226.png"
+     ]
+    },
+    {
+     "query": "when am I seeing the bone and joint specialist",
+     "expected": [
+      "Screenshot_20260821_151648.png"
+     ],
+     "got": [
+      "IMG_1496.jpg",
+      "Screenshot_20260626_122603.png",
+      "Screenshot_20260728_102226.png"
+     ]
+    },
+    {
+     "query": "when am I seeing the ear nose and throat doctor",
+     "expected": [
+      "Screenshot_20260824_215842.png"
+     ],
+     "got": [
+      "IMG_1496.jpg",
+      "Screenshot_20260626_122603.png",
+      "Screenshot_20260728_102226.png"
+     ]
+    },
+    {
+     "query": "vectors that only get stretched, not rotated, by a matrix",
+     "expected": [
+      "scan0011.pdf"
+     ],
+     "got": [
+      "scan0016.pdf"
+     ]
+    },
+    {
+     "query": "how to describe how running time grows with input size",
+     "expected": [
+      "IMG_6361.jpg"
+     ],
+     "got": [
+      "Screenshot_20260914_114129.png",
+      "IMG_2723.jpg",
+      "scan0025.pdf"
+     ]
+    },
+    {
+     "query": "what time does the dorm close at night",
+     "expected": [
+      "scan0016.pdf"
+     ],
+     "got": [
+      "IMG_7554.jpg",
+      "IMG_4197.jpg",
+      "IMG_1417.jpg"
+     ]
+    }
+   ]
+  },
+  {
+   "method": "Semantic",
+   "queries": 118,
+   "recall@5": 1.0,
+   "mrr@10": 0.9550847457627119,
+   "hit@1": 0.9152542372881356,
+   "recall@5_by_type": {
+    "content": 1.0,
+    "date": 1.0
+   },
+   "latency_ms_mean": 11.542596366903666,
+   "latency_ms_p95": 19.312596996314824,
+   "failures": []
+  },
+  {
+   "method": "Hybrid",
+   "queries": 118,
+   "recall@5": 1.0,
+   "mrr@10": 0.9661016949152542,
+   "hit@1": 0.9322033898305084,
+   "recall@5_by_type": {
+    "content": 1.0,
+    "date": 1.0
+   },
+   "latency_ms_mean": 12.908740821037979,
+   "latency_ms_p95": 19.62639600969851,
+   "failures": []
+  },
+  {
+   "method": "Agent, offline planner",
+   "queries": 118,
+   "recall@5": 1.0,
+   "mrr@10": 0.9872881355932204,
+   "hit@1": 0.9745762711864406,
+   "recall@5_by_type": {
+    "content": 1.0,
+    "date": 1.0
+   },
+   "latency_ms_mean": 10.480375745396872,
+   "latency_ms_p95": 12.88780098548159,
+   "failures": []
+  }
+ ]
+}
