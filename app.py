@@ -46,7 +46,7 @@ def get_llm():
 
 
 def open_file(path: str):
-    if "microsoft" in platform.uname().release.lower():  # WSL -> open with the Windows default app
+    if "microsoft" in platform.uname().release.lower():
         win = subprocess.run(["wslpath", "-w", path], capture_output=True, text=True).stdout.strip()
         subprocess.Popen(["explorer.exe", win])
     elif platform.system() == "Darwin":
@@ -82,7 +82,6 @@ def run_index(folder: Path):
                        f"{rep.empty} without text · {rep.errors} errors · {rep.seconds:.0f}s")
 
 
-# ------------------------------------------------------------------ sidebar
 with st.sidebar:
     st.header("Your files")
     folder = st.text_input("Folder to index", value=str(DEMO_DIR if DEMO_DIR.exists() else Path.home() / "Pictures"))
@@ -121,7 +120,6 @@ with st.sidebar:
     else:
         st.info("Offline planner (no NEBIUS_API_KEY). Everything runs locally." + (f"\n\n{llm_err}" if llm_err else ""), icon="🔒")
 
-# ------------------------------------------------------------------ main
 st.title("🔎 Recall")
 st.caption("Find anything you saved — by what it *said*, not what it was called. OCR, embeddings and the index never leave this machine.")
 

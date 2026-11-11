@@ -16,10 +16,9 @@ from datetime import date, datetime, timedelta
 from . import config
 from .search import Filters, Hit, Searcher, tokens
 
-WEAK_SEMANTIC = 0.62  # top cosine below this = "I'm not confident" -> try another strategy
+WEAK_SEMANTIC = 0.62
 
 
-# ----------------------------------------------------------------------------- ledger
 @dataclass
 class LedgerEntry:
     ts: str
@@ -34,16 +33,15 @@ class LedgerEntry:
 LEDGER: list[LedgerEntry] = []
 
 
-# ----------------------------------------------------------------------------- plan
 @dataclass
 class Plan:
     semantic_query: str
     keywords: list[str] = field(default_factory=list)
     file_types: list[str] = field(default_factory=list)
-    date_from: str | None = None  # YYYY-MM-DD inclusive
-    date_to: str | None = None    # YYYY-MM-DD exclusive
-    intent: str = "find"          # find | answer
-    source: str = "rules"         # rules | nemotron
+    date_from: str | None = None
+    date_to: str | None = None
+    intent: str = "find"
+    source: str = "rules"
 
     def filters(self) -> Filters:
         ts = lambda s: datetime.strptime(s, "%Y-%m-%d").timestamp() if s else None
@@ -175,7 +173,6 @@ def _parse_plan(text: str, query: str) -> Plan | None:
     )
 
 
-# ----------------------------------------------------------------------------- agent
 @dataclass
 class Step:
     name: str
@@ -221,7 +218,6 @@ class RecallAgent:
             if attempt + 1 < self.max_attempts:
                 plan = self._replan(query, plan, today, steps)
 
-        # Keep the attempt the retriever was most confident about.
         plan, hits, info = max(attempts, key=lambda a: (bool(a[1]), a[2]["top_semantic"]))
 
         answer = None
@@ -255,7 +251,6 @@ class RecallAgent:
             except Exception as e:
                 steps.append(Step("re-plan (nemotron failed)", {"error": str(e)[:200]}, 0))
         if new is None:
-            # Offline fallback: relax filters first, then search on content words only.
             if prev.file_types or prev.date_from or prev.date_to:
                 new = Plan(prev.semantic_query, prev.keywords, [], None, None, prev.intent, "rules")
             else:

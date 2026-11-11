@@ -35,10 +35,9 @@ def font(name, size):
         return ImageFont.load_default(size=size)
 
 
-R = random.Random(7)  # reseeded from --seed in main()
+R = random.Random(7)
 TODAY = date(2026, 10, 21)
 
-# ----------------------------------------------------------------------------- rendering
 def render(lines, style, title=None):
     """Render text lines into a screenshot-like image. Returns PIL image."""
     if style == "phone":
@@ -55,7 +54,7 @@ def render(lines, style, title=None):
     elif style == "receipt":
         W, fs, pad, bg, fg, bar = 560, 24, 36, (252, 252, 248), (25, 25, 25), None
         body_font, title_font = font("mono", fs), font("bold", 30)
-    else:  # paper
+    else:
         W, fs, pad, bg, fg, bar = 1240, 28, 90, (255, 255, 255), (20, 20, 20), None
         body_font, title_font = font("serif", fs), font("bold", 40)
 
@@ -118,7 +117,6 @@ def save_pdf(lines, title, out_dir, scanned, counter):
     return name
 
 
-# ----------------------------------------------------------------------------- content pools
 COURSES = ["Machine Learning", "Operating Systems", "Computer Networks", "Linear Algebra", "Database Systems",
            "Computer Vision", "Natural Language Processing", "Signals and Systems", "Probability and Statistics",
            "Data Structures", "Software Engineering", "Deep Learning", "Korean Language II", "Microeconomics",
@@ -217,7 +215,6 @@ def fmt_day(d):
     return d.strftime("%a, %b %d, %Y").replace(" 0", " ")
 
 
-# ----------------------------------------------------------------------------- targets
 def targets():
     """Yield (title, lines, style, queries, saved_at, as_pdf) for every target document."""
     for i, c in enumerate(COURSES):
@@ -237,7 +234,6 @@ def targets():
         q = R.choice([f"deadline for {c} homework {n}", f"when do I have to submit assignment {n} for {c}", f"{c} hw{n} due date"])
         yield ("Assignment", lines, R.choice(["web", "phone"]), [q], rdate(), R.random() < 0.25)
 
-    # Receipts: some stores twice in different months, to exercise date filters.
     months = [TODAY.month - 3, TODAY.month - 2, TODAY.month - 1, TODAY.month]
     for s in STORES:
         mons = R.sample(months, 2) if R.random() < 0.6 else [R.choice(months)]
@@ -305,7 +301,7 @@ def fillers(n):
         elif kind < 0.65:
             yield (None, R.choice(CODE).split("\n"), "web")
         elif kind < 0.8:
-            yield ("Lecture", ["- " + b for b in R.choice(SLIDES)[1][:2]] + ["- Review questions on the next page"], "slide")  # near-duplicate distractor
+            yield ("Lecture", ["- " + b for b in R.choice(SLIDES)[1][:2]] + ["- Review questions on the next page"], "slide")
         else:
             yield ("PHOTO", [], None)
 
@@ -368,7 +364,6 @@ def main():
     names = list(manifest)
     for title, lines, style in fillers(int(n_fill * 0.97)):
         emit(title, lines, style, rdate(-200, -1), style == "web" and R.random() < .15)
-    # Exact duplicates (should be detected and collapsed).
     for _ in range(a.n - len(manifest)):
         src = R.choice(names)
         dst = f"copy_{R.randint(100, 999)}_{src}"

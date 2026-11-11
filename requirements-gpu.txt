@@ -1,4 +1,3 @@
-# NVIDIA GPU build: CUDA 12 + cuDNN 9 come as pip wheels, no system CUDA toolkit needed (driver >= 525).
 rapidocr>=3.10
 onnxruntime-gpu[cuda,cudnn]>=1.21
 fastembed-gpu>=0.9

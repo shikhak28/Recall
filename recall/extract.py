@@ -22,7 +22,6 @@ def _get_ocr():
         from rapidocr import LangRec, ModelType, OCRVersion, RapidOCR
 
         gpu = use_cuda()
-        # PP-OCRv5 English recognizer: keeps word spacing (the default Chinese model glues English words together).
         _ocr = RapidOCR(params={
             "Rec.lang_type": LangRec.EN, "Rec.ocr_version": OCRVersion.PPOCRV5, "Rec.model_type": ModelType.MOBILE,
             "Global.use_cls": False, "Global.log_level": "error",
@@ -33,24 +32,21 @@ def _get_ocr():
 
 @dataclass
 class Segment:
-    page: int  # 1-based page for PDFs, 1 for images/text
+    page: int
     text: str
-    method: str  # "ocr" | "pdf-text" | "plain"
+    method: str
 
 
 def ocr_image(img: Image.Image) -> str:
     img = ImageOps.exif_transpose(img).convert("RGB")
-    # Very large photos slow OCR down without improving it; cap the long side.
     if max(img.size) > 2400:
         img.thumbnail((2400, 2400))
     out = _get_ocr()(np.asarray(img))
     if out.txts is None:
         return ""
     result = [(b, t, s) for b, t, s in zip(out.boxes, out.txts, out.scores) if s >= MIN_CONFIDENCE and t.strip()]
-    # Text-free photos sometimes yield a stray glyph or two; treat that as no text.
     if sum(ch.isalnum() for _, t, _ in result for ch in t) < 4:
         return ""
-    # Sort boxes into reading order: by line (top y, bucketed), then left x.
     boxes = sorted(result, key=lambda r: (round(min(p[1] for p in r[0]) / 12), min(p[0] for p in r[0])))
     lines, last_y = [], None
     for box, text, _score in boxes:
@@ -87,7 +83,6 @@ def _extract_pdf(path: Path, max_pages: int = 50) -> list[Segment]:
             if len(text) >= 20:
                 segs.append(Segment(i + 1, text, "pdf-text"))
                 continue
-            # Scanned page: render and OCR.
             pix = page.get_pixmap(dpi=150)
             img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
             segs.append(Segment(i + 1, ocr_image(img), "ocr"))
@@ -101,7 +96,6 @@ def chunk(text: str) -> list[str]:
     out, start = [], 0
     while start < len(text):
         end = min(len(text), start + CHUNK_CHARS)
-        # Prefer to break on a newline or space near the end of the window.
         if end < len(text):
             cut = max(text.rfind("\n", start + CHUNK_CHARS // 2, end), text.rfind(" ", start + CHUNK_CHARS // 2, end))
             if cut > start:

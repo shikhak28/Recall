@@ -11,7 +11,6 @@ _model = None
 def _get_model():
     global _model
     if _model is None:
-        # Once the model is cached, stop the HF hub client from phoning home.
         if EMBED_CACHE.exists() and any(EMBED_CACHE.iterdir()):
             os.environ.setdefault("HF_HUB_OFFLINE", "1")
         from fastembed import TextEmbedding

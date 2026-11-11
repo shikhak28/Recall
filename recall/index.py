@@ -102,7 +102,6 @@ def index_folder(
     rep = IndexReport()
     workers = workers or default_workers()
 
-    # Phase 1 (cheap, sequential): find new/changed files, hash them, detect exact duplicates.
     todo, dups, seen = [], [], {}
     for path in iter_files(root):
         rep.scanned += 1
@@ -126,10 +125,9 @@ def index_folder(
             todo.append(base)
     con.commit()
 
-    # Phase 2: extract text (parallel), then embed + store as results arrive.
     total = len(todo)
     if workers > 1 and total > 1:
-        ctx = mp.get_context("spawn")  # never fork a process that may hold ONNX/CUDA sessions
+        ctx = mp.get_context("spawn")
         with ProcessPoolExecutor(max_workers=min(workers, total), mp_context=ctx) as pool:
             futures = {pool.submit(_extract_job, b["path"]): b for b in todo}
             for i, fut in enumerate(as_completed(futures), 1):
@@ -149,7 +147,6 @@ def index_folder(
         _insert_file(con, {**b, "status": "ok", "duplicate_of": orig["id"] if orig else None, "indexed_at": time.time()})
     con.commit()
 
-    # Drop files that disappeared from disk.
     for row in con.execute("SELECT id, path FROM files WHERE path LIKE ?", (str(root) + "%",)).fetchall():
         if not Path(row["path"]).exists():
             _delete_file_rows(con, row["id"])
@@ -162,7 +159,7 @@ def _extract_job(path: str):
     """Runs in a worker process. Returns (segments, error)."""
     try:
         return extract.extract(Path(path)), None
-    except Exception as e:  # corrupted file, unreadable PDF, etc.
+    except Exception as e:
         return None, f"{type(e).__name__}: {e}"[:300]
 
 
@@ -180,7 +177,6 @@ def _store(con: sqlite3.Connection, base: dict, segments, error, rep: IndexRepor
         con.commit()
         return
     file_id = _insert_file(con, {**base, "status": "ok"})
-    # Prefix the filename so a meaningful name still helps semantic retrieval.
     stem = Path(base["path"]).stem
     vecs = embed.embed_passages([f"{stem}\n{c}" for _, _, c in pieces])
     for (page, method, text), v in zip(pieces, vecs):

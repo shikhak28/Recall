@@ -39,8 +39,8 @@ def corpus(tmp_path):
     (files / "notes.txt").write_text("Groceries: milk, eggs, kimchi. Call the landlord about the heater.")
     (files / "broken.pdf").write_bytes(b"%PDF-1.4 this is not really a pdf \x00\x01")
     (files / "archive.xyz").write_bytes(b"unsupported")
-    Image.new("RGB", (400, 300), (40, 120, 200)).save(files / "IMG_0001.jpg")  # no text
-    shutil.copy(files / "Screenshot_1.png", files / "copy_of_exam.png")  # exact duplicate
+    Image.new("RGB", (400, 300), (40, 120, 200)).save(files / "IMG_0001.jpg")
+    shutil.copy(files / "Screenshot_1.png", files / "copy_of_exam.png")
     con = index.connect(tmp_path / "db.sqlite")
     return files, con
 
@@ -50,8 +50,8 @@ def test_index_handles_every_file_kind(corpus):
     rep = index.index_folder(files, con)
     assert rep.scanned == 7
     assert rep.unsupported == 1
-    assert rep.errors == 1          # broken.pdf recorded, not crashed
-    assert rep.empty == 1           # text-free photo
+    assert rep.errors == 1
+    assert rep.empty == 1
     assert rep.duplicates == 1
     assert rep.indexed == 3
     assert index.stats(con)["searchable"] == 3
@@ -83,7 +83,7 @@ def test_empty_query_and_filters(corpus):
     s = Searcher(con)
     assert s.search("   ", "hybrid")[0] == []
     hits, _ = s.search("exam", "hybrid", filters=Filters(kinds=["pdf"]))
-    assert hits == []  # no searchable PDFs
+    assert hits == []
     hits, _ = s.search("groceries", "hybrid", filters=Filters(kinds=["text"]))
     assert [h.name for h in hits] == ["notes.txt"]
 
@@ -145,9 +145,7 @@ def test_agent_replans_when_weak_and_only_answer_step_sees_file_text(corpus):
     files, con = corpus
     index.index_folder(files, con)
     llm = FakeNemotron([
-        # 1st plan: deliberately bad (wrong type filter) -> no results -> weak
         '{"semantic_query": "exam", "keywords": [], "file_types": ["pdf"], "intent": "answer"}',
-        # re-plan: drop the filter, add synonyms
         '<think>relax</think>{"semantic_query": "Operating Systems midterm exam date and room", '
         '"keywords": ["midterm", "room"], "file_types": [], "intent": "answer"}',
         "Oct 30, 2026 in Room 301 [1]",
@@ -158,6 +156,5 @@ def test_agent_replans_when_weak_and_only_answer_step_sees_file_text(corpus):
     assert res.answer.startswith("Oct 30")
     purposes = [(p, c) for p, _, c in llm.calls]
     assert purposes == [("plan", False), ("re-plan", False), ("answer", True)]
-    # Planning calls carry the query only, never file names or OCR text.
     for p, user, _ in llm.calls[:2]:
         assert "Screenshot_1" not in user and "Room 301" not in user

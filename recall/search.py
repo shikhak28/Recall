@@ -25,8 +25,8 @@ def tokens(text: str) -> list[str]:
 
 @dataclass
 class Filters:
-    kinds: list[str] = field(default_factory=list)  # subset of image/pdf/text; empty = all
-    date_from: float | None = None  # unix timestamps on file mtime
+    kinds: list[str] = field(default_factory=list)
+    date_from: float | None = None
     date_to: float | None = None
 
     def sql(self) -> tuple[str, list]:
@@ -58,7 +58,6 @@ class Hit:
 
 
 class Searcher:
-    # Weight of the keyword bonus in hybrid mode, chosen on a separate dev corpus (eval/tune_hybrid.py).
     kw_weight = 0.05
 
     def __init__(self, con: sqlite3.Connection):
@@ -68,7 +67,6 @@ class Searcher:
         self._file_ids: np.ndarray | None = None
         self._mat: np.ndarray | None = None
 
-    # ---------- embedding matrix, cached until the index changes ----------
     def _matrix(self):
         key = self.con.execute("SELECT COUNT(*), COALESCE(MAX(id),0) FROM chunks").fetchone()
         key = tuple(key)
@@ -86,7 +84,6 @@ class Searcher:
         rows = self.con.execute(f"SELECT id, path, name, kind, mtime FROM files f WHERE {where}", args).fetchall()
         return {r["id"]: r for r in rows}
 
-    # ---------- individual retrievers: each returns {file_id: (score, chunk_id)} ----------
     def _filename(self, query: str, allowed) -> dict[int, tuple[float, int | None]]:
         qt = set(tokens(query))
         out = {}
@@ -111,7 +108,7 @@ class Searcher:
         out = {}
         for r in rows:
             if r["file_id"] in allowed and r["file_id"] not in out:
-                out[r["file_id"]] = (-r["s"], r["cid"])  # bm25: lower is better
+                out[r["file_id"]] = (-r["s"], r["cid"])
         return out
 
     def _semantic(self, query: str, allowed) -> dict:
@@ -128,7 +125,6 @@ class Searcher:
                 break
         return out
 
-    # ---------- public API ----------
     def search(self, query: str, mode: str = "hybrid", filters: Filters | None = None, k: int = 10,
                semantic_query: str | None = None, keywords: list[str] | None = None) -> tuple[list[Hit], dict]:
         """Return top-k file hits and timing/diagnostic info."""
@@ -150,7 +146,7 @@ class Searcher:
         elif mode == "semantic":
             sem = self._semantic(sem_q, allowed)
             fused = {f: s for f, (s, _) in sem.items()}
-        else:  # hybrid: semantic cosine plus a max-normalised BM25 bonus for exact-term matches
+        else:
             kw = self._keyword(query, allowed, keywords)
             sem = self._semantic(sem_q, allowed)
             floor = min((s for s, _ in sem.values()), default=0.0)

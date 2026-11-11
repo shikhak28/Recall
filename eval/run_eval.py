@@ -102,11 +102,11 @@ def main():
     st = index.stats(con)
     n_files = st["files"]
     hashes = [index._sha1(p) for p in sorted((data / "files").iterdir())]
-    expected_dups = len(hashes) - len(set(hashes))  # byte-identical files, incl. identical rendered fillers
+    expected_dups = len(hashes) - len(set(hashes))
     print("index:", rep, st)
 
     s = Searcher(con)
-    s.search("warm up", "hybrid")  # load the embedding model before timing
+    s.search("warm up", "hybrid")
     names = lambda hits: [h.name for h in hits]
     methods = {
         "Filename (baseline)": lambda q: names(s.search(q, "filename", k=10)[0]),

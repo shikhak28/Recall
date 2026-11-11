@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# One-shot setup.  ./setup.sh        -> auto (GPU build if nvidia-smi works)
-#                  ./setup.sh cpu    -> force CPU build
 set -euo pipefail
 cd "$(dirname "$0")"
 PY=${PYTHON:-python3}
@@ -9,7 +7,6 @@ $PY -m venv .venv
 if [[ "${1:-auto}" != "cpu" ]] && command -v nvidia-smi >/dev/null && nvidia-smi >/dev/null 2>&1; then
   echo ">> NVIDIA GPU found: installing GPU build"
   .venv/bin/pip install -q -r requirements-gpu.txt
-  # fastembed/rapidocr may pull the CPU onnxruntime too; two onnxruntimes in one env break CUDA.
   .venv/bin/pip uninstall -y -q onnxruntime || true
   .venv/bin/pip install -q --force-reinstall --no-deps "onnxruntime-gpu>=1.21"
 else
