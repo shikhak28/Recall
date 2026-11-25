@@ -3,7 +3,7 @@ import argparse
 from datetime import datetime
 from pathlib import Path
 
-from . import agent, index
+from . import agent, index, pii
 from .search import Searcher
 
 
@@ -14,7 +14,7 @@ def main():
     p.add_argument("folder")
     p = sub.add_parser("search")
     p.add_argument("query")
-    p.add_argument("--mode", default="agent", choices=["agent", "hybrid", "semantic", "keyword", "filename"])
+    p.add_argument("--mode", default="agent", choices=["agent", "hybrid", "semantic", "keyword", "visual", "filename"])
     p.add_argument("-k", type=int, default=5)
     p.add_argument("--answer", action="store_true", help="let Nemotron read the top-3 snippets to answer")
     sub.add_parser("stats")
@@ -45,7 +45,9 @@ def main():
             hits, _ = s.search(a.query, a.mode, k=a.k)
         print()
         for i, h in enumerate(hits, 1):
-            print(f"{i}. {h.name}  ({h.kind}, saved {datetime.fromtimestamp(h.mtime):%Y-%m-%d})\n   {h.snippet}\n   {h.path}")
+            flag = f"  [sensitive: {pii.describe(h.sensitive)}]" if h.sensitive else ""
+            print(f"{i}. {h.name}  ({h.kind}, saved {datetime.fromtimestamp(h.mtime):%Y-%m-%d}){flag}\n"
+                  f"   {pii.redact(h.snippet)[0]}\n   {h.path}")
 
 
 if __name__ == "__main__":

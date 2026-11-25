@@ -1,0 +1,35 @@
+#,question,correct_file,type,rank_agent,rank_hybrid,rank_filename
+1,how do I send a GET and a POST request from a servlet,1 Difference_between_GET_and_POST.pdf,paraphrase,1,1,1
+2,java lab on implicit and explicit casting,1 Type_Casting.pdf,paraphrase,1,1,1
+3,when is homework 2 due,hw2.pdf,paraphrase,1,1,none
+4,assignment to build a portfolio website with HTML and CSS,HOA1 description.pdf,paraphrase,1,1,none
+5,how to write research notes,Guide to Grad School Life_week 10.pdf,paraphrase,1,1,none
+6,numpy legacy random number generator,API_Documentation.pdf,keyword,1,1,none
+7,course list for the global affairs master program,International_Cooperation_Curriculum.pdf,paraphrase,1,1,none
+8,probability review for stochastic processes,L01-math_review_1.pdf,paraphrase,1,1,1
+9,lecture on removing weights to make a network sparse,Lecture 04-Pruning.pdf,paraphrase,1,1,1
+10,how to make a model use fewer bits,Lecture 05-Quantization-I.pdf,paraphrase,1,1,none
+11,automatically searching for the best network design,Lecture 08-Neural-Architecture-Search.pdf,paraphrase,1,1,1
+12,how much safety stock to keep,SL_06.pdf,paraphrase,1,1,none
+13,SARSA and Q-learning slides,SL_13.pdf,keyword,1,1,none
+14,Andrew Ng notes on support vector machines,cs229-notes3.pdf,keyword,2,2,5
+15,week 7 clustering slides,Advanced_Machine_Learning07_Clustering_Part1.pdf,keyword,1,1,1
+16,bagging and boosting lecture,Advanced_Machine_Learning11_Ensemble (2).pdf,paraphrase,1,1,none
+17,how to find outliers in data,Advanced_Machine_Learning13_Anomaly detection.pdf,paraphrase,1,1,none
+18,learning rate scheduling and normalization layers,lec01-advanced-optimizers.pdf,keyword,none,none,none
+19,history of ImageNet winners and ResNet,lec02-cnn-architectures.pdf,paraphrase,2,2,none
+20,transformers for images,lec03-vision-transformers.pdf,paraphrase,1,1,1
+21,customer churn project with SMOTE,README.md,keyword,1,1,none
+22,"three training runs with 16, 40 and 80 days",training_runs_comparison_ppt.txt,keyword,1,1,1
+23,calendar of company events for equities,CF-Event-equities-20-11-2026-to-5-12-2026.csv,paraphrase,1,1,1
+24,"backend diagram with Django, PostgreSQL and AWS",Web Application Backend Architecture Diagram.png,image text,1,1,1
+25,CSRF protection flow for Google login,CSRF Protection Workflow-2026-02-18-233225.png,image text,1,1,1
+26,"accuracy vs epochs chart with one, two and three scales",acc_plot.png,image text,1,1,none
+27,correlation of lagged features with clear-sky index,corr1.png,image text,1,1,none
+28,commodities control banner,Commodities Banner Image.png,image text,1,1,1
+29,food delivery project with riders and deadlines,SL_Project.pdf,mixed Korean/English,1,1,1
+30,TOPIK exam schedule 2025,2025년 한국어능력시험(TOPIK) 시행계획 공고문.pdf,Korean (expected to fail),1,1,1
+31,Dokdo trip for international students,251017_외국인 유학생 평화리포터 독도탐방 참가자 모집 안내문.pdf,Korean (expected to fail),none,none,none
+32,photo of a church with colorful domes,panfilov-park.jpg,photo (no text),1,1,none
+33,houseboat on a river with palm trees,istockphoto-472909442-612x612.jpg,photo (no text),1,1,none
+34,old town with a turquoise river and a stone bridge,Bern-scaled.jpg,photo (no text),1,1,none

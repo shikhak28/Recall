@@ -1,6 +1,7 @@
 """Recall — Streamlit UI.   streamlit run app.py"""
 import html
 import io
+import json
 import os
 import platform
 import re
@@ -10,7 +11,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from recall import agent, config, index
+from recall import agent, config, index, pii
 from recall.search import Searcher, tokens
 
 st.set_page_config(page_title="Recall", page_icon="🔎", layout="wide")
@@ -24,6 +25,9 @@ st.markdown("""<style>
 mark {background: #76b90033; padding: 0 2px; border-radius: 3px; color: inherit;}
 .snip {font-size: 0.95rem; line-height: 1.5;}
 .meta {color: #888; font-size: 0.82rem;}
+.tag {display: inline-block; font-size: 0.78rem; padding: 1px 8px; border-radius: 10px; margin-right: 6px;}
+.tag-pii {background: #fde8e8; color: #9b1c1c;}
+.tag-vis {background: #e8f0fe; color: #1a4fa0;}
 </style>""", unsafe_allow_html=True)
 
 
@@ -79,7 +83,8 @@ def run_index(folder: Path):
     rep = index.index_folder(folder, get_con(), progress=lambda i, n, f: bar.progress(i / n, text=f"{i}/{n} · {f[:30]}"))
     bar.empty()
     st.sidebar.success(f"Indexed {rep.indexed} new · {rep.skipped_unchanged} unchanged · {rep.duplicates} duplicates · "
-                       f"{rep.empty} without text · {rep.errors} errors · {rep.seconds:.0f}s")
+                       f"{rep.empty} without text · {rep.errors} errors · {rep.visual} images for visual search · "
+                       f"{rep.sensitive} with sensitive data · {rep.seconds:.0f}s")
 
 
 with st.sidebar:
@@ -107,12 +112,19 @@ with st.sidebar:
     m1.metric("Searchable", s["searchable"])
     m2.metric("Images", s["images"])
     m3.metric("PDFs", s["pdfs"])
+    m4, m5 = st.columns(2)
+    m4.metric("Photos, no text", s["photos_no_text"], help="Found by what the picture shows (on-device CLIP)")
+    m5.metric("Sensitive", s["sensitive"], help="Files with ID numbers, card numbers, passwords... (detected on-device)")
     st.caption(f"{s['duplicates']} duplicates collapsed · {s['empty']} without text · {s['errors']} unreadable")
 
     st.header("Search engine")
     llm, llm_err = get_llm()
-    mode = st.radio("Mode", ["Agent", "Hybrid", "Semantic", "Keyword", "Filename only"], horizontal=False,
-                    help="Agent = Nemotron plans the search (filters, synonyms) and retries when unsure. Others are the building blocks.")
+    mode = st.radio("Mode", ["Agent", "Hybrid", "Semantic", "Keyword", "Visual (photos)", "Filename only"], horizontal=False,
+                    help="Agent = Nemotron plans the search (filters, synonyms) and retries when unsure. "
+                         "Visual = describe what a photo shows. Others are the building blocks.")
+    reveal = st.toggle("Show sensitive values", value=False,
+                       help="Off: ID numbers, card numbers and passwords are masked on screen. They are always masked "
+                            "before anything is sent to Nemotron.")
     allow_answer = st.toggle("Let Nemotron read the top 3 snippets to answer questions", value=False,
                              help="Off: only your query text ever leaves the device. On: the top-3 extracted snippets are sent too.")
     if llm:
@@ -123,7 +135,11 @@ with st.sidebar:
 st.title("🔎 Recall")
 st.caption("Find anything you saved — by what it *said*, not what it was called. OCR, embeddings and the index never leave this machine.")
 
-tab_search, tab_privacy = st.tabs(["Search", "Privacy ledger"])
+tab_search, tab_sensitive, tab_privacy = st.tabs(["Search", "Sensitive files", "Privacy ledger"])
+
+
+def shown(text: str) -> str:
+    return text if reveal else pii.redact(text)[0]
 with tab_search:
     if "q" not in st.session_state:
         st.session_state.q = ""
@@ -145,7 +161,8 @@ with tab_search:
             hits, answer, steps, ms = res.hits, res.answer, res.steps, res.total_ms
             terms = set(tokens(q)) | {t.lower() for t in res.plan.keywords}
         else:
-            m = {"Hybrid": "hybrid", "Semantic": "semantic", "Keyword": "keyword", "Filename only": "filename"}[mode]
+            m = {"Hybrid": "hybrid", "Semantic": "semantic", "Keyword": "keyword", "Visual (photos)": "visual",
+                 "Filename only": "filename"}[mode]
             hits, info = searcher.search(q, m, k=10)
             ms, terms = info["ms"], set(tokens(q))
 
@@ -169,7 +186,7 @@ with tab_search:
                     elif h.kind == "pdf":
                         left.image(pdf_thumb(h.path, h.page), width="stretch")
                     else:
-                        left.code(h.chunk_text[:300])
+                        left.code(shown(h.chunk_text[:300]))
                 except Exception:
                     left.caption("(preview unavailable — file moved?)")
                 sig = " · ".join(f"{k} {v:.2f}" for k, v in h.signals.items() if v is not None)
@@ -177,7 +194,14 @@ with tab_search:
                 right.markdown(f"**{rank}. {html.escape(h.name)}**  \n<span class='meta'>{h.kind}"
                                f"{' · page ' + str(h.page) if h.kind == 'pdf' and h.page else ''} · saved {saved} · {sig}</span>",
                                unsafe_allow_html=True)
-                right.markdown(f"<div class='snip'>{highlight(h.snippet, terms)}</div>", unsafe_allow_html=True)
+                tags = ""
+                if h.visual_only:
+                    tags += "<span class='tag tag-vis'>📷 no text · matched by the picture</span>"
+                if h.sensitive:
+                    tags += f"<span class='tag tag-pii'>🔒 sensitive: {html.escape(pii.describe(h.sensitive))}</span>"
+                if tags:
+                    right.markdown(tags, unsafe_allow_html=True)
+                right.markdown(f"<div class='snip'>{highlight(shown(h.snippet), terms)}</div>", unsafe_allow_html=True)
                 b1, b2, _ = right.columns([1, 1, 3])
                 if b1.button("Open", key=f"open{h.file_id}"):
                     try:
@@ -187,19 +211,46 @@ with tab_search:
                 if Path(h.path).exists():
                     b2.download_button("Download", Path(h.path).read_bytes(), file_name=h.name, key=f"dl{h.file_id}")
                 with right.expander("Extracted text"):
-                    st.text(h.chunk_text)
+                    st.text(shown(h.chunk_text) if h.chunk_text else "(no text in this file)")
                 right.caption(h.path)
+
+with tab_sensitive:
+    st.subheader("Files that hold sensitive data")
+    st.write("Detected on this device from the extracted text: Aadhaar, PAN, card numbers (Luhn check), Korean resident "
+             "numbers, passport and bank account numbers, passwords and API keys. Values are masked here and are always "
+             "masked before the optional answer step sends snippets to Nemotron.")
+    rows = get_con().execute("SELECT id, name, path, kind, pii FROM files WHERE pii NOT IN ('{}','') AND pii IS NOT NULL "
+                             "AND duplicate_of IS NULL ORDER BY name").fetchall()
+    if not rows:
+        st.success("No sensitive data found in the indexed files.", icon="✅")
+    counts = {}
+    for r in rows:
+        for k, n in json.loads(r["pii"]).items():
+            counts[k] = counts.get(k, 0) + n
+    if counts:
+        cols = st.columns(min(4, len(counts)))
+        for i, (k, n) in enumerate(sorted(counts.items(), key=lambda x: -x[1])):
+            cols[i % len(cols)].metric(pii.LABELS.get(k, k), n)
+    for r in rows:
+        found = json.loads(r["pii"])
+        with st.expander(f"🔒 {r['name']} · {pii.describe(found)}"):
+            text = "\n".join(c["text"] for c in get_con().execute(
+                "SELECT text FROM chunks WHERE file_id = ? ORDER BY id LIMIT 3", (r["id"],)))
+            st.text(shown(text)[:1200])
+            st.caption(r["path"])
 
 with tab_privacy:
     st.subheader("Everything that left this device")
     st.write("OCR, embeddings, the index and ranking run locally. The only outbound calls are to Nemotron on "
              "Nebius Token Factory, and each one is logged here with its exact payload.")
     led = agent.LEDGER
-    a, b, c = st.columns(3)
+    a, b, c, d = st.columns(4)
     a.metric("Requests", len(led))
     b.metric("Bytes sent", sum(e.bytes_sent for e in led))
     c.metric("Requests containing file text", sum(e.contains_file_content for e in led))
+    d.metric("Sensitive values masked", sum(e.values_masked for e in led))
     for e in reversed(led[-50:]):
+        masked = f" · {e.values_masked} sensitive values masked" if e.values_masked else ""
         with st.expander(f"{e.ts} · {e.purpose} · {e.host} · {e.bytes_sent} B · "
-                         f"{'⚠ contains file snippets' if e.contains_file_content else 'query text only'}"):
+                         f"{'⚠ contains file snippets' if e.contains_file_content else 'query text only'}{masked}"):
             st.code(e.payload, language="json")

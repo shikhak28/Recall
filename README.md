@@ -117,13 +117,44 @@ Engineering findings worth knowing:
 
 ![retrieval](eval/results/retrieval.png)
 
+## Visual search and sensitive-data detection
+
+**Photos with no text.** OCR finds nothing in a holiday photo, so text search can never return it. Recall also
+embeds every image with CLIP ViT-B/32 (ONNX, on-device). In *Visual* mode you describe the picture
+(*"houseboat on a river with palm trees"*). In Hybrid/Agent mode a text-free photo joins the results only when CLIP
+is confident: similarity ≥ 0.24 **and** at least 0.08 above the median image, so text questions are not disturbed
+(matching real photos stood out by 0.13–0.19; abstract questions against random photos never passed 0.054).
+
+**Sensitive data.** While indexing, the extracted text is scanned on-device for Aadhaar numbers (Verhoeff checksum),
+PAN (OCR-tolerant), payment cards (Luhn), Korean resident numbers (valid date), passport and bank account numbers
+(context word), IFSC codes, passwords and API keys. Flagged files get a badge and appear in the *Sensitive files* tab;
+values are masked on screen unless you switch *Show sensitive values* on, and they are **always masked before the
+optional answer step sends snippets to Nemotron** (the ledger shows how many were masked).
+
+```bash
+RECALL_HOME=~/.recall_real python eval/run_real_test.py           # real files: rank per question, Hit@1, Recall@5
+python eval/run_sensitive_eval.py --seed 7 --per-type 15            # held-out fake documents -> OCR -> detector
+```
+
+| Real-file test (40 files, 34 questions) | Hit@1 before | Hit@1 now |
+|---|---|---|
+| Documents + image text (29) | 0.897 | 0.897 |
+| Photos with no text (3) | 0.000 | **1.000** |
+| All except the 2 Korean files (32) | 0.812 | **0.906** |
+
+| Sensitive-data detection | Result |
+|---|---|
+| Fake documents, held-out (8 types × 15, rendered → OCR → detector) | **120 / 120** found |
+| Synthetic corpus, 288 files with no sensitive data | **0** false alarms (6 / 6 Wi-Fi passwords found) |
+| Real test files (36 lecture PDFs, diagrams, notes) | **0** false alarms |
+
 ## Privacy model
 
 | Data | Leaves the device? |
 |---|---|
 | Files, thumbnails, OCR text, embeddings, index | **Never** |
 | Your query text | Only in Agent mode with a key: sent to Nemotron on Nebius Token Factory to build the plan |
-| Top-3 matching snippets | Only if you switch on *"Let Nemotron read the top 3 snippets"* |
+| Top-3 matching snippets | Only if you switch on *"Let Nemotron read the top 3 snippets"*; ID numbers, card numbers and passwords inside them are masked first |
 
 `tests/test_recall.py::test_no_network_during_indexing_or_offline_search` blocks every socket and checks that
 indexing and offline search still work with **zero** connection attempts. The in-app *Privacy ledger* shows
@@ -132,6 +163,8 @@ every outbound request verbatim.
 ## Limitations and next steps
 
 * The synthetic corpus is English; Korean/multilingual OCR + a multilingual embedder is the next step.
+* Visual search was checked on only 3 real photos; sensitive-data tests use clean rendered images, not
+  angled phone photos of real cards.
 * Query intent, not the user's history, drives the planner; learning from clicked results is future work.
 * Search results are per file; very long PDFs are capped at 50 pages per file.
 

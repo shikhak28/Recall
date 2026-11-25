@@ -12,6 +12,11 @@ DB_PATH = DATA_DIR / "recall.db"
 EMBED_MODEL = os.getenv("RECALL_EMBED_MODEL", "BAAI/bge-small-en-v1.5")
 EMBED_CACHE = Path(os.getenv("RECALL_MODEL_CACHE", Path.home() / ".cache" / "recall" / "models"))
 
+# Visual search: CLIP image + text towers (ONNX via fastembed). RECALL_VISUAL=0 turns it off.
+VISUAL = os.getenv("RECALL_VISUAL", "1") != "0"
+CLIP_IMAGE_MODEL = os.getenv("RECALL_CLIP_IMAGE_MODEL", "Qdrant/clip-ViT-B-32-vision")
+CLIP_TEXT_MODEL = os.getenv("RECALL_CLIP_TEXT_MODEL", "Qdrant/clip-ViT-B-32-text")
+
 NEBIUS_API_KEY = os.getenv("NEBIUS_API_KEY", "")
 NEBIUS_BASE_URL = os.getenv("NEBIUS_BASE_URL", "https://api.tokenfactory.nebius.com/v1/")
 NEBIUS_MODEL = os.getenv("NEBIUS_MODEL", "")
@@ -20,6 +25,13 @@ IMAGE_EXT = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff"}
 PDF_EXT = {".pdf"}
 TEXT_EXT = {".txt", ".md", ".csv"}
 SUPPORTED_EXT = IMAGE_EXT | PDF_EXT | TEXT_EXT
+
+def model_cached(name: str) -> bool:
+    """True when this model is already in the cache, so it can be loaded without touching the network.
+    Checked per model: one cached model must not stop another from downloading."""
+    slug = name.split("/")[-1].lower()
+    return EMBED_CACHE.exists() and any(slug in p.name.lower() for p in EMBED_CACHE.iterdir())
+
 
 DEVICE = os.getenv("RECALL_DEVICE", "auto").lower()
 WORKERS = int(os.getenv("RECALL_WORKERS", "0"))

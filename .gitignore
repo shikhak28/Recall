@@ -8,3 +8,4 @@ eval/data/
 *.pyc
 .pytest_cache/
 eval/*_log.txt
+eval/sensitive_positives/

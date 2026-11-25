@@ -1,9 +1,7 @@
 """Local text embeddings (fastembed / ONNX Runtime). No network access after the one-time model download."""
-import os
-
 import numpy as np
 
-from .config import EMBED_CACHE, EMBED_MODEL, use_cuda
+from .config import EMBED_CACHE, EMBED_MODEL, model_cached, use_cuda
 
 _model = None
 
@@ -11,12 +9,12 @@ _model = None
 def _get_model():
     global _model
     if _model is None:
-        if EMBED_CACHE.exists() and any(EMBED_CACHE.iterdir()):
-            os.environ.setdefault("HF_HUB_OFFLINE", "1")
         from fastembed import TextEmbedding
 
-        EMBED_CACHE.mkdir(parents=True, exist_ok=True)
         kw = {"providers": ["CUDAExecutionProvider", "CPUExecutionProvider"]} if use_cuda() else {}
+        if model_cached(EMBED_MODEL):
+            kw["local_files_only"] = True
+        EMBED_CACHE.mkdir(parents=True, exist_ok=True)
         _model = TextEmbedding(EMBED_MODEL, cache_dir=str(EMBED_CACHE), **kw)
     return _model
 

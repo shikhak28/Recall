@@ -2,7 +2,8 @@
 
 The planner is NVIDIA Nemotron served by Nebius Token Factory. Privacy contract:
   * planning and re-planning send ONLY the user's query text (never file names or contents);
-  * the optional answer step sends the top snippets, and only when the user turns it on.
+  * the optional answer step sends the top snippets, and only when the user turns it on;
+  * sensitive values in those snippets (Aadhaar, card numbers, passwords, ...) are masked on the device first.
 Every outbound request is written to an in-memory ledger that the UI shows verbatim.
 If no API key is configured, a deterministic rule-based planner keeps everything fully offline.
 """
@@ -13,7 +14,7 @@ import time
 from dataclasses import asdict, dataclass, field
 from datetime import date, datetime, timedelta
 
-from . import config
+from . import config, pii
 from .search import Filters, Hit, Searcher, tokens
 
 WEAK_SEMANTIC = 0.62
@@ -28,6 +29,7 @@ class LedgerEntry:
     bytes_sent: int
     contains_file_content: bool
     payload: str
+    values_masked: int = 0
 
 
 LEDGER: list[LedgerEntry] = []
@@ -142,11 +144,12 @@ class Nemotron:
                     return i
         return nemo[0]
 
-    def chat(self, system: str, user: str, purpose: str, contains_file_content: bool, max_tokens: int = 1200) -> str:
+    def chat(self, system: str, user: str, purpose: str, contains_file_content: bool, max_tokens: int = 1200,
+             values_masked: int = 0) -> str:
         messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
         payload = json.dumps(messages, ensure_ascii=False)
         LEDGER.append(LedgerEntry(datetime.now().isoformat(timespec="seconds"), purpose, self.host, self.model,
-                                  len(payload.encode()), contains_file_content, payload))
+                                  len(payload.encode()), contains_file_content, payload, values_masked))
         resp = self.client.chat.completions.create(model=self.model, messages=messages, temperature=0.0,
                                                    max_tokens=max_tokens)
         text = resp.choices[0].message.content or ""
@@ -260,15 +263,21 @@ class RecallAgent:
 
     def _answer(self, query, hits, steps) -> str | None:
         t = time.perf_counter()
-        excerpts = "\n\n".join(f"[{i + 1}] ({h.name})\n{h.chunk_text[:600]}" for i, h in enumerate(hits))
+        parts, masked = [], 0
+        for i, h in enumerate(hits):
+            text, n = pii.redact(h.chunk_text[:600])
+            masked += n
+            parts.append(f"[{i + 1}] ({h.name})\n{text}")
+        excerpts = "\n\n".join(parts)
         try:
             ans = self.llm.chat("You answer questions about the user's own files.",
                                 ANSWER_PROMPT.format(question=query, excerpts=excerpts),
-                                "answer", contains_file_content=True, max_tokens=800)
+                                "answer", contains_file_content=True, max_tokens=800, values_masked=masked)
         except Exception as e:
             ans = None
             steps.append(Step("answer (failed)", {"error": str(e)[:200]}, 0))
-        steps.append(Step("answer (nemotron)", {"excerpts_sent": len(hits)}, (time.perf_counter() - t) * 1000))
+        steps.append(Step("answer (nemotron)", {"excerpts_sent": len(hits), "sensitive_values_masked": masked},
+                          (time.perf_counter() - t) * 1000))
         return ans
 
 
