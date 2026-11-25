@@ -1,0 +1,156 @@
+PPT-READY CONTENT
+Baseline Validation: Three Training Iterations (16 -> 40 -> 80 Days)
+============================================================================
+(Each block = one slide. Skips setup/data-processing content — pipeline
+approach and per-run findings only.)
+
+
+SLIDE 1: Overview — Why Three Iterations
+---------------------------------------------
+Baseline validation was run three times, at increasing scale, to test
+whether the satellite-image-to-PV relationship holds up under scrutiny —
+not just to get a bigger number.
+
+  Run 1: 16 days   — first working pipeline, proof of concept
+  Run 2: 40 days   — reduce small-sample noise, re-check the pattern
+  Run 3: 80 days   — add cloud-mask feature + cross-validation for
+                     a statistically defensible result
+
+Each run used the same modeling setup for comparability:
+  A) Persistence (naive: PV now = PV 15 min ago)
+  B) Geometry-only (solar zenith, hour, month — no image data)
+  C) Geometry + satellite image features
+  D) Persistence + Geometry + Image (combined)
+
+
+SLIDE 2: Run 1 — 16 Days (Proof of Concept)
+--------------------------------------------------
+Approach: first stratified sample (1 clear + 1 cloudy day per month),
+15-min cadence, 4 GOES bands (2, 3, 5, 13)
+Split: 13 train days / 3 test days
+
+Results (RMSE, lower = better):
+  A. Persistence              0.364
+  B. Geometry-only            0.623
+  C. Geometry + Image         0.442   (+29% vs B)
+  D. Persistence+Geom+Image   0.312   (+14.2% vs A)
+
+Finding: Image features appeared to add a LARGE improvement over
+geometry alone (+29%). Feature importance was physically sensible
+(cloud-top temperature, band texture dominant).
+Caveat flagged at the time: only 3 test days — result likely noisy.
+
+
+SLIDE 3: Run 2 — 40 Days (Noise Check)
+---------------------------------------------
+Approach: same pipeline, denser stratified sampling (~5 days/month),
+same 4 bands and cadence
+Split: 32 train days / 8 test days
+
+Results (RMSE):
+  A. Persistence              0.202
+  B. Geometry-only            0.188
+  C. Geometry + Image         0.182   (+2.9% vs B)
+  D. Persistence+Geom+Image   0.173   (+14.5% vs A)
+
+Key finding: the image-only advantage over geometry SHRANK dramatically
+(+29% at 16 days -> +2.9% at 40 days). With more training data, the
+geometry-only model learned the seasonal/hourly pattern much better on
+its own, closing most of the gap.
+Interpretation: the Run 1 result was partly an artifact of a small,
+under-trained geometry baseline — not a sign that images stopped
+mattering. The combined model (D) result stayed stable (+14.2% -> +14.5%),
+identified as the most trustworthy finding across both runs.
+
+
+SLIDE 4: Run 3 — 80 Days + New Feature (Cloud Mask)
+------------------------------------------------------------
+Approach: scaled sampling further (~80 days), added a new feature —
+ABI-L2-ACMC cloud mask (a NOAA-processed binary cloud/clear
+classification per pixel, independent of the raw band statistics used
+before)
+Rationale: test whether a more direct, expert-validated cloud signal
+strengthens the image-only model more than raw reflectance/temperature
+statistics did
+
+First split (single random 80/20 day split):
+  A. Persistence                     0.216
+  B. Geometry-only                   0.266   (worse than persistence)
+  C2. Geometry+Image+Cloud           0.260   (worse than persistence)
+  D2. Persistence+Geom+Image+Cloud   0.182   (+15.7% vs A)
+
+Finding: B and C2 both performed WORSE than naive persistence in this
+split — a red flag, not a real regression in the data. It indicated
+that a single random train/test day split is unstable at this sample
+size: whichever specific days land in the test set can swing the result
+sharply. D2 (combined model) remained strong and consistent regardless.
+
+
+SLIDE 5: Run 3 (continued) — Cross-Validation for a Robust Result
+---------------------------------------------------------------------------
+Fix applied: replaced the single random split with 5-fold cross-validation
+(day-level folds) — every model evaluated 5 times on different train/test
+day combinations, results averaged, so no single "unlucky" split can
+distort the conclusion. This is standard practice for small-sample
+model comparison and a more statistically defensible methodology.
+
+Cross-validated results (mean RMSE ± std across 5 folds):
+  A. Persistence                     0.2076 ± 0.0119
+  B. Geometry-only                   0.2254 ± 0.0221
+  C2. Geometry+Image+Cloud           0.2367 ± 0.0238
+  D2. Persistence+Geom+Image+Cloud   0.1721 ± 0.0111   (+17.1% vs A)
+
+Finding: under rigorous cross-validation, image+cloud features alone
+(C2) did NOT clearly outperform geometry alone (B) — and even showed
+higher variance across folds. However, D2 (the combined model) remained
+the clear, stable winner: lowest mean RMSE, lowest variance, and its
++17.1% improvement over persistence is now the most rigorously validated
+number in this project.
+
+
+SLIDE 6: Cross-Run Comparison Table
+----------------------------------------
+                        16 days   40 days   80 days (single)  80 days (5-fold CV)
+A. Persistence           0.364     0.202        0.216              0.208
+B. Geometry-only         0.623     0.188        0.266              0.225
+C/C2. +Image(+Cloud)     0.442     0.182        0.260              0.237
+D/D2. Persist+Geom+Img   0.312     0.173        0.182              0.172
+
+C-over-B improvement:    +29%      +2.9%        (B worse than C2)  C2 worse than B
+D-over-A improvement:    +14.2%    +14.5%       +15.7%             +17.1%
+
+
+SLIDE 7: What This Progression Actually Shows
+----------------------------------------------------
+1. The standalone "image features beat geometry" claim was NOT robust —
+   it was strong at small sample size (16 days), weakened with more data
+   (40 days), and did not hold up under cross-validation (80 days).
+   This is a meaningful, honest finding, not a failure: it shows that
+   raw band statistics alone are a marginal, noisy signal on top of
+   geometry once geometry itself is well estimated.
+
+2. The combined model (Persistence + Geometry + Image) is the one
+   consistent, robust result across all three iterations and both
+   evaluation methods: ~14-17% improvement over naive persistence,
+   which is itself a strong, well-established baseline in solar
+   nowcasting literature.
+
+3. Methodological lesson: single train/test splits are unreliable at
+   this sample size; cross-validation was necessary to get a trustworthy
+   number. This progression (16 days -> 40 days -> 80 days + CV) is
+   itself evidence of a rigorous, iterative research process — each step
+   was run specifically to stress-test the previous step's conclusion.
+
+
+SLIDE 8: Headline Result to Report
+-----------------------------------------
+"A model combining short-term persistence, solar geometry, and
+satellite-derived cloud/reflectance features predicts PV clear-sky
+index with 17.1% lower error than naive persistence, validated via
+5-fold cross-validation on 80 stratified days spanning all seasons and
+both clear and cloudy conditions."
+
+Supporting evidence: physically sensible feature importance across all
+three runs (cloud-top temperature and cloud texture consistently rank
+among the top predictors), confirming the model is learning real
+atmospheric signal, not noise.
